@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 AI 工具集 · 极光导航</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS Variables — 极客风 · 护眼版
+   ============================================================ */
+:root {
+  --bg-primary: #0A0E17;
+  --bg-card: #141A26;
+  --bg-card-hover: #1a2235;
+  --accent-primary: #10B981;
+  --accent-glow: rgba(16, 185, 129, 0.4);
+  --accent-strong: rgba(16, 185, 129, 0.7);
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --border-code: #2D3A4E;
+  --border-card: #1E293B;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  --font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 护眼暖色模式 */
+body.warm-mode {
+  --bg-primary: #1a1814;
+  --bg-card: #24211c;
+  --bg-card-hover: #2e2a23;
+  --accent-primary: #f59e0b;
+  --accent-glow: rgba(245, 158, 11, 0.4);
+  --accent-strong: rgba(245, 158, 11, 0.7);
+  --text-primary: #f5f0e8;
+  --text-secondary: #b8a99a;
+  --border-code: #3d362b;
+  --border-card: #2e2a23;
+}
+
+/* ============================================================
+   Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background var(--transition), color var(--transition);
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   Particle Background
+   ============================================================ */
+#particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   Container
+   ============================================================ */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   Header
+   ============================================================ */
+.header {
+  text-align: center;
+  padding: 80px 0 20px;
+}
+
+.header__badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
+  border-radius: 100px;
+  padding: 6px 18px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.header__subtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  font-weight: 300;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   Section
+   ============================================================ */
+.section {
+  padding: 48px 0 16px;
+}
+
+.section__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-code);
+}
+
+.section__icon {
+  font-size: 1.6rem;
+  width: 44px; height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-code);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.section__title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.section__title span {
+  font-family: var(--font-mono);
+  color: var(--accent-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-right: 10px;
+}
+
+.section__desc {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 300;
+  margin-top: 2px;
+}
+
+/* ============================================================
+   Card Grid
+   ============================================================ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+/* ============================================================
+   Card
+   ============================================================ */
+.card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: all var(--transition);
+  cursor: default;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  opacity: 0;
+  transition: opacity var(--transition);
+  box-shadow:
+    0 0 20px var(--accent-glow),
+    0 0 60px rgba(16, 185, 129, 0.08),
+    inset 0 0 0 1px var(--accent-glow);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card:hover::before { opacity: 1; }
+.card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.card__name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card__tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
+  border-radius: 4px;
+  padding: 1px 7px;
+  opacity: 0.8;
+  vertical-align: middle;
+}
+
+.card__desc {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  margin-top: 10px;
+  font-weight: 300;
+}
+
+.card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  gap: 10px;
+}
+
+/* ============================================================
+   Copy Button — 终端风格
+   ============================================================ */
+.btn-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: rgba(45, 58, 78, 0.3);
+  border: 1px solid var(--border-code);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  user-select: none;
+  position: relative;
+  z-index: 2;
+}
+
+.btn-copy::before {
+  content: '>';
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.btn-copy:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.btn-copy.copied {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.btn-copy.copied::after {
+  content: ' ✓ 已复制';
+  color: var(--accent-primary);
+}
+
+/* ============================================================
+   Link Button
+   ============================================================ */
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition);
+  position: relative;
+  z-index: 2;
+}
+
+.btn-link:hover { color: var(--accent-primary); }
+.btn-link::after {
+  content: ' ↗';
+  font-size: 0.7rem;
+}
+
+/* ============================================================
+   Sidebar Toggle
+   ============================================================ */
+.sidebar-toggle {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 48px; height: 48px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-code);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.3rem;
+  transition: all var(--transition);
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.sidebar-toggle:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+
+/* ============================================================
+   Sidebar Panel
+   ============================================================ */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 198;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+.sidebar-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0; right: 0;
+  width: 320px;
+  max-width: 85vw;
+  height: 100%;
+  background: var(--bg-card);
+  border-left: 1px solid var(--border-code);
+  z-index: 199;
+  padding: 32px 24px;
+  transform: translateX(100%);
+  transition: transform var(--transition);
+  overflow-y: auto;
+}
+
+.sidebar.open { transform: translateX(0); }
+
+.sidebar__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar__close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all var(--transition);
+}
+
+.sidebar__close:hover { color: var(--text-primary); background: var(--border-code); }
+
+.sidebar__section { margin-bottom: 28px; }
+.sidebar__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+/* Toggle Switch */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.toggle-label { font-size: 0.9rem; color: var(--text-secondary); }
+
+.toggle-switch {
+  position: relative;
+  width: 48px; height: 26px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border-code);
+  border-radius: 26px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  left: 3px; bottom: 3px;
+  background: var(--text-secondary);
+  border-radius: 50%;
+  transition: all var(--transition);
+}
+
+input:checked + .toggle-slider { background: var(--accent-primary); }
+input:checked + .toggle-slider::before {
+  transform: translateX(22px);
+  background: #fff;
+}
+
+/* Sidebar shortcut links */
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.shortcut-btn {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-code);
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: center;
+}
+
+.shortcut-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.footer {
+  text-align: center;
+  padding: 60px 0 40px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+}
+
+.footer span { color: var(--accent-primary); }
+
+/* ============================================================
+   Toast
+   ============================================================ */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg-card);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 12px 24px;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 300;
+  box-shadow: 0 0 30px var(--accent-glow);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 768px) {
+  .header { padding-top: 48px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .sidebar { width: 100%; max-width: 100%; }
+  .sidebar-toggle { bottom: 20px; right: 20px; width: 42px; height: 42px; }
+}
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border-code); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+</style>
+</head>
+<body>
+
+<!-- Particle Canvas -->
+<canvas id="particles"></canvas>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     Header
+     ============================================================ -->
+<header class="header">
+  <div class="container">
+    <div class="header__badge">AI TOOLKIT 2026</div>
+    <h1>🌟 2026 AI 工具集 · 极光导航</h1>
+    <p class="header__subtitle">深色护眼 · 极客效率 · 场景化分类 — 快速定位你需要的 AI 工具</p>
+  </div>
+</header>
+
+<!-- ============================================================
+     Section 01 — 核心大脑
+     ============================================================ -->
+<section class="section" id="brain">
+  <div class="container">
+    <div class="section__header">
+      <div class="section__icon">🧠</div>
+      <div>
+        <h2 class="section__title"><span>01.</span>核心大脑 · 日常必装</h2>
+        <p class="section__desc">你的"外置大脑"，解决 80% 的日常问题。建议至少常备一个。</p>
+      </div>
+    </div>
+    <div class="card-grid">
+
+      <!-- ChatGPT -->
+      <div class="card">
+        <div class="card__name">ChatGPT <span class="card__tag">TOP</span></div>
+        <p class="card__desc">全能王者。强在深度推理、复杂研究及语音交互，生态最完善。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://chat.openai.com" data-name="ChatGPT 链接">复制链接</button>
+          <a href="https://chat.openai.com" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- Claude -->
+      <div class="card">
+        <div class="card__name">Claude <span class="card__tag">码农首选</span></div>
+        <p class="card__desc">码农与作家的最爱。编程逻辑严谨，文风自然优美，极客圈口碑炸裂。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://claude.ai" data-name="Claude 链接">复制链接</button>
+          <a href="https://claude.ai" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- DeepSeek -->
+      <div class="card">
+        <div class="card__name">DeepSeek <span class="card__tag">免费</span></div>
+        <p class="card__desc">国潮之光。免费、代码能力强、支持超长文本，中文理解深，性价比极高。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://chat.deepseek.com" data-name="DeepSeek 链接">复制链接</button>
+          <a href="https://chat.deepseek.com" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- Gemini -->
+      <div class="card">
+        <div class="card__name">Gemini <span class="card__tag">多模态</span></div>
+        <p class="card__desc">谷歌多模态王牌。原生图像/视频理解极强，可生成图表，适合做学习辅助。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://gemini.google.com" data-name="Gemini 链接">复制链接</button>
+          <a href="https://gemini.google.com" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     Section 02 — 创作引擎
+     ============================================================ -->
+<section class="section" id="create">
+  <div class="container">
+    <div class="section__header">
+      <div class="section__icon">✍️</div>
+      <div>
+        <h2 class="section__title"><span>02.</span>创作引擎 · 内容生产力</h2>
+        <p class="section__desc">让 AI 替你画画、做 PPT、剪视频。</p>
+      </div>
+    </div>
+    <div class="card-grid">
+
+      <!-- Napkin AI -->
+      <div class="card">
+        <div class="card__name">Napkin AI <span class="card__tag">图表</span></div>
+        <p class="card__desc">文字变图表神器。将枯燥文字秒变逻辑清晰的思维导图和流程图，PPT 汇报效率翻倍。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://www.napkin.ai" data-name="Napkin AI 链接">复制链接</button>
+          <a href="https://www.napkin.ai" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- Gamma -->
+      <div class="card">
+        <div class="card__name">Gamma <span class="card__tag">PPT</span></div>
+        <p class="card__desc">PPT 生成神器。一句话生成排版精美的演示文稿，职场人和学生党的救星。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://gamma.app" data-name="Gamma 链接">复制链接</button>
+          <a href="https://gamma.app" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- Nano Banana -->
+      <div class="card">
+        <div class="card__name">Nano Banana <span class="card__tag">生图</span></div>
+        <p class="card__desc">生图新王。提示词理解极佳，尤其在角色一致性和平面排版设计上表现惊人。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://nanobanana.ai" data-name="Nano Banana 链接">复制链接</button>
+          <a href="https://nanobanana.ai" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- ElevenLabs -->
+      <div class="card">
+        <div class="card__name">ElevenLabs <span class="card__tag">配音</span></div>
+        <p class="card__desc">配音天花板。支持声音克隆，生成的情感语音逼真得令人惊叹。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://elevenlabs.io" data-name="ElevenLabs 链接">复制链接</button>
+          <a href="https://elevenlabs.io" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- Sora 2 / Veo 3 -->
+      <div class="card">
+        <div class="card__name">Sora 2 / Veo 3 <span class="card__tag">视频</span></div>
+        <p class="card__desc">视频生成效果已高度符合物理规律，进入实用阶段。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://sora.com" data-name="Sora 链接">复制链接</button>
+          <a href="https://sora.com" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- 可灵 / 即梦 -->
+      <div class="card">
+        <div class="card__name">可灵 / 即梦 <span class="card__tag">国产</span></div>
+        <p class="card__desc">国产视频/图片神器。免费额度多，中文提示词理解更好，上手门槛极低。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://klingai.com" data-name="可灵 链接">复制链接</button>
+          <a href="https://klingai.com" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- Suno -->
+      <div class="card">
+        <div class="card__name">Suno <span class="card__tag">音乐</span></div>
+        <p class="card__desc">音乐生成。能生成带人声的完整歌曲，创作属于自己的专辑。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://suno.com" data-name="Suno 链接">复制链接</button>
+          <a href="https://suno.com" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     Section 03 — 效率外挂
+     ============================================================ -->
+<section class="section" id="dev">
+  <div class="container">
+    <div class="section__header">
+      <div class="section__icon">⚙️</div>
+      <div>
+        <h2 class="section__title"><span>03.</span>效率外挂 · 开发与自动化</h2>
+        <p class="section__desc">极客的核心武器，让 AI 替你"跑腿"和"写代码"。</p>
+      </div>
+    </div>
+    <div class="card-grid">
+
+      <!-- Cursor -->
+      <div class="card">
+        <div class="card__name">Cursor <span class="card__tag">IDE</span></div>
+        <p class="card__desc">AI 代码编辑器。"氛围编程"工具，理解整个项目帮你写代码、找 Bug，开发效率飙升。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://cursor.com" data-name="Cursor 链接">复制链接</button>
+          <a href="https://cursor.com" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- Perplexity / Comet -->
+      <div class="card">
+        <div class="card__name">Perplexity / Comet <span class="card__tag">搜索</span></div>
+        <p class="card__desc">答案引擎。搜索直接给出带引用的答案，无广告。Comet 是 AI 浏览器，能执行多步网页操作。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://www.perplexity.ai" data-name="Perplexity 链接">复制链接</button>
+          <a href="https://www.perplexity.ai" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- NotebookLM -->
+      <div class="card">
+        <div class="card__name">NotebookLM <span class="card__tag">研究</span></div>
+        <p class="card__desc">个性化研究助理。上传文档，AI 基于你的"专属知识库"回答问题，甚至生成播客双人对谈。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://notebooklm.google.com" data-name="NotebookLM 链接">复制链接</button>
+          <a href="https://notebooklm.google.com" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- n8n / Zapier -->
+      <div class="card">
+        <div class="card__name">n8n / Zapier <span class="card__tag">自动化</span></div>
+        <p class="card__desc">自动化流水线。连接各种 App，实现"客户下单→自动发邮件→同步表格"等复杂自动化。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://n8n.io" data-name="n8n 链接">复制链接</button>
+          <a href="https://n8n.io" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+      <!-- Manus -->
+      <div class="card">
+        <div class="card__name">Manus <span class="card__tag">智能体</span></div>
+        <p class="card__desc">通用 AI 智能体。下达指令（如"分析竞品并整理成表"），它会在云端独立操作电脑完成，真正的数字员工。</p>
+        <div class="card__footer">
+          <button class="btn-copy" data-copy="https://manus.im" data-name="Manus 链接">复制链接</button>
+          <a href="https://manus.im" target="_blank" rel="noopener" class="btn-link">访问官网</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     Footer
+     ============================================================ -->
+<footer class="footer">
+  <div class="container">
+    <p>Designed with <span>❤</span> · 2026 AI 工具集 · 极光导航 · 持续更新中</p>
+  </div>
+</footer>
+
+<!-- ============================================================
+     Sidebar Toggle Button
+     ============================================================ -->
+<button class="sidebar-toggle" id="sidebarToggle" title="设置面板" aria-label="打开设置面板">⚡</button>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar Panel -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar__title">
+    ⚙️ 设置面板
+    <button class="sidebar__close" id="sidebarClose" aria-label="关闭设置">✕</button>
+  </div>
+
+  <div class="sidebar__section">
+    <div class="sidebar__label">外观</div>
+    <div class="toggle-row">
+      <span class="toggle-label">🌙 护眼暖色模式</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="warmToggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="sidebar__section">
+    <div class="sidebar__label">快速跳转</div>
+    <div class="shortcut-grid">
+      <button class="shortcut-btn" data-scroll="brain">🧠 核心大脑</button>
+      <button class="shortcut-btn" data-scroll="create">✍️ 创作引擎</button>
+      <button class="shortcut-btn" data-scroll="dev">⚙️ 效率外挂</button>
+      <button class="shortcut-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">🚀 回到顶部</button>
+    </div>
+  </div>
+
+  <div class="sidebar__section">
+    <div class="sidebar__label">关于</div>
+    <p style="color:var(--text-muted);font-size:0.8rem;line-height:1.7;">
+      极光导航 v1.0<br>
+      深色护眼 · 极客效率 · 场景化分类<br>
+      持续收录优质 AI 工具
+    </p>
+  </div>
+</aside>
+
+<!-- ============================================================
+     Scripts
+     ============================================================ -->
+<script>
+// ============================================================
+// Particle Background
+// ============================================================
+(() => {
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let animId;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  class Particle {
+    constructor() {
+      this.reset();
+      this.y = Math.random() * canvas.height; // spread initially
+    }
+    reset() {
+      this.x = Math.random() * canvas.width;
+      this.y = -10;
+      this.size = Math.random() * 1.5 + 0.5;
+      this.speedY = Math.random() * 0.3 + 0.1;
+      this.speedX = (Math.random() - 0.5) * 0.2;
+      this.opacity = Math.random() * 0.4 + 0.1;
+    }
+    update() {
+      this.y += this.speedY;
+      this.x += this.speedX;
+      if (this.y > canvas.height + 10) this.reset();
+      if (this.x < -10) this.x = canvas.width + 10;
+      if (this.x > canvas.width + 10) this.x = -10;
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      const accent = getComputedStyle(document.body).getPropertyValue('--accent-primary').trim();
+      ctx.fillStyle = accent;
+      ctx.globalAlpha = this.opacity;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  function initParticles() {
+    resize();
+    const count = Math.min(80, Math.floor((canvas.width * canvas.height) / 12000));
+    particles = Array.from({ length: count }, () => new Particle());
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    animId = requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', initParticles);
+  initParticles();
+  animate();
+})();
+
+// ============================================================
+// Copy Button
+// ============================================================
+document.querySelectorAll('.btn-copy').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const text = btn.dataset.copy;
+    const name = btn.dataset.name || text;
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.classList.add('copied');
+      showToast(`$> 已复制: ${name}`);
+      setTimeout(() => btn.classList.remove('copied'), 2000);
+    } catch {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      btn.classList.add('copied');
+      showToast(`$> 已复制: ${name}`);
+      setTimeout(() => btn.classList.remove('copied'), 2000);
+    }
+  });
+});
+
+// ============================================================
+// Toast
+// ============================================================
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+// ============================================================
+// Sidebar
+// ============================================================
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+const toggle = document.getElementById('sidebarToggle');
+const close = document.getElementById('sidebarClose');
+
+function openSidebar() {
+  sidebar.classList.add('open');
+  overlay.classList.add('open');
+}
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+}
+
+toggle.addEventListener('click', openSidebar);
+close.addEventListener('click', closeSidebar);
+overlay.addEventListener('click', closeSidebar);
+
+// ESC to close
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
+});
+
+// ============================================================
+// Warm Mode Toggle
+// ============================================================
+const warmToggle = document.getElementById('warmToggle');
+
+// Persist preference
+if (localStorage.getItem('ai-nav-warm') === 'true') {
+  document.body.classList.add('warm-mode');
+  warmToggle.checked = true;
+}
+
+warmToggle.addEventListener('change', () => {
+  document.body.classList.toggle('warm-mode', warmToggle.checked);
+  localStorage.setItem('ai-nav-warm', warmToggle.checked);
+});
+
+// ============================================================
+// Quick Scroll Buttons
+// ============================================================
+document.querySelectorAll('[data-scroll]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = document.getElementById(btn.dataset.scroll);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      closeSidebar();
+    }
+  });
+});
+</script>
+
+</body>
+</html>
